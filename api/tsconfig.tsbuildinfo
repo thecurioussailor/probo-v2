@@ -1,0 +1,1 @@
+{"root":["./src/redismanager.ts","./src/index.ts","./src/controller/balances.ts","./src/controller/mint.ts","./src/controller/orderbook.ts","./src/controller/symbol.ts","./src/controller/user.ts","./src/routes/routes.ts"],"errors":true,"version":"5.6.3"}
