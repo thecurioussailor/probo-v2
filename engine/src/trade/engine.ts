@@ -1,5 +1,6 @@
 import { RedisManager } from "../RedisManager"
 import { BUY_ORDER, CREATE_STOCK_SYMBOL, CREATE_USER, GET_ALL_INR_BALANCES, GET_ALL_STOCK_BALANCES, GET_INR_BALANCE_BY_USER_ID, GET_ORDERBOOK, GET_ORDERBOOK_BY_SYMBOL, GET_STOCK_BALANCE_BY_USER_ID, MessageFromAPI, MINT_TRADE, ON_RAMP_INR_TO_USER_ID, RESET_ALL_BALANCES, SELL_ORDER } from "../types/types"
+import { Order } from "./orderbook"
 
 type Inr_Balances = {
     [userId: string] : {
@@ -23,6 +24,7 @@ type Stock_Balances = {
 export class Engine {
     private INR_BALANCES: Inr_Balances = {}
     private STOCK_BALANCES: Stock_Balances = {} 
+    private ORDERBOOK: Order[]=[];
 
     constructor(){
 
@@ -48,7 +50,7 @@ export class Engine {
                 break;
             case CREATE_STOCK_SYMBOL: 
                 try{
-                    const payload = this.createUser(message.data.stockSymbol);
+                    const payload = this.createStockSymbol(message.data.stockSymbol);
                     RedisManager.getInstance().sendToAPI(clientId, {
                         type: "SYMBOL_CREATED",
                         payload
@@ -70,49 +72,63 @@ export class Engine {
                 break;
             case GET_ALL_INR_BALANCES:
                 try{
-
+                    const payload = this.getAllINRBalances();
+                    RedisManager.getInstance().sendToAPI(clientId, {
+                        type: "INR_BALANCES",
+                        payload
+                    })
                 }catch (err){
                     
                 }
                 break;
             case GET_ALL_STOCK_BALANCES:
                 try{
-
+                    const payload = this.getAllStockBalances();
+                    RedisManager.getInstance().sendToAPI(clientId, {
+                        type: "STOCK_BALANCES",
+                        payload
+                    })
                 }catch (err){
                     
                 }
                 break;
             case RESET_ALL_BALANCES:
                 try{
-
+                    this.resetAllBalances();
+                    RedisManager.getInstance().sendToAPI(clientId, {
+                        type: "RESET_BALANCES",
+                        payload: {
+                            message: "All balances has been reset."
+                        }
+                    })
                 }catch (err){
                     
                 }
                 break;
             case GET_INR_BALANCE_BY_USER_ID:
                 try{
-
+                    const payload = this.getINRBalanceByUserId(message.data.userId);
                 }catch (err){
                     
                 }
                 break;
             case ON_RAMP_INR_TO_USER_ID:
                 try{
-
+                    const payload = this.onRampINRToUser(message.data.userId, message.data.amount)
                 }catch (err){
                     
                 }
                 break;
             case GET_STOCK_BALANCE_BY_USER_ID:
                 try{
-
+                    this.getStockBalanceByUserId(message.data.userId);
                 }catch (err){
                     
                 }
                 break;
             case BUY_ORDER:
                 try{
-
+                    this.buyOrder(message.data);
                 }catch (err){
                     
                 }
@@ -133,7 +149,7 @@ export class Engine {
                 break;
             case MINT_TRADE:
                 try{
-
+                    
                 }catch (err){
                     
                 }
@@ -156,40 +172,95 @@ export class Engine {
     }
 
     createStockSymbol(stockSymbol: string){
-        
+        const symbolExists = this.ORDERBOOK.some(order => order.stockSymbol === stockSymbol)
+        if(symbolExists){
+            throw new Error("Stock symbol already exists.");
+        }
+
+        this.ORDERBOOK.push(new Order(stockSymbol));
+
+        return {
+            stockSymbol,
+            message: "Stock symbol created."
+        }
     }
 
     getOrderbook(){
-
+        return this.ORDERBOOK;
     }
     getAllINRBalances(){
-
+        return this.INR_BALANCES;
     }
     getAllStockBalances(){
-
+        return this.STOCK_BALANCES;
     }
     resetAllBalances(){
-
+        Object.keys(this.INR_BALANCES).forEach((key) => delete this.INR_BALANCES[key]);
+        Object.keys(this.STOCK_BALANCES).forEach((key) => delete this.STOCK_BALANCES[key]);
+        this.ORDERBOOK = [];
     }
-    getINRBalanceByUserId(){
+    getINRBalanceByUserId(userId: string){
+        if(!this.INR_BALANCES[userId]){
+            throw new Error("No user found.");
+        }
 
+        const balance = this.INR_BALANCES[userId].balance;
+        return {
+            balance
+        }
     }
-    onRampINRToUser(){
+    onRampINRToUser(userId: string, amount: number){
+        if(!this.INR_BALANCES[userId]){
+            throw new Error("User not found.")
+        }
 
-    }
-    getStockBalanceByUserId(){
+        this.INR_BALANCES[userId].balance += amount;
 
+        return this.INR_BALANCES[userId];
     }
-    buyOrder(){
+    getStockBalanceByUserId(userId: string){
+        if(!this.STOCK_BALANCES[userId]){{
+            throw new Error("User not available.");
+        }}
+
+        return this.STOCK_BALANCES[userId];
+    }
+    buyOrder(data: {}){
 
     }
     sellOrder(){
 
     }
-    orderbookBySymbol(){
+    orderbookBySymbol(stockSymbol: string){
+        const filteredOrders = this.ORDERBOOK.filter(order => order.stockSymbol === stockSymbol);
+        if(filteredOrders.length === 0){
+            throw new Error("Stock symbol not found in the order book.")
+        }
 
+        return filteredOrders;
     }
-    mintTrade(userId: string, stockSymbol: string, quantity: string){
+    mintTrade(userId: string, stockSymbol: string, quantity: number){
+        if(!this.INR_BALANCES[userId]){
+            throw new Error("User does not exist.");
+        }
 
+        if(!this.STOCK_BALANCES[userId][stockSymbol]){
+            this.STOCK_BALANCES[userId][stockSymbol] = {
+                    yes: {
+                        quantity: 0,
+                        locked: 0
+                    },
+                    no: {
+                        quantity: 0,
+                        locked: 0
+                    }
+                }
+            
+        }
+
+        this.STOCK_BALANCES[userId][stockSymbol].yes.quantity += quantity;
+        this.STOCK_BALANCES[userId][stockSymbol].no.quantity += quantity;
+
+        return this.STOCK_BALANCES[userId][stockSymbol];
     }
 }
