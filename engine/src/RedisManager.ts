@@ -1,11 +1,18 @@
 import { createClient, RedisClientType } from "redis";
+import { WsMessage } from "./types/types";
+import { MessageToAPI } from "./types/messageToAPI";
 
 export class RedisManager {
     private client: RedisClientType;
     private static instance: RedisManager;
 
     constructor(){
-        this.client = createClient();
+        this.client = createClient({
+            socket: {
+                host: 'localhost',
+                port: 6379
+            }
+        });
         this.client.connect();
     }
 

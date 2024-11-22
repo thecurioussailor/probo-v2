@@ -81,3 +81,7 @@ export type MessageFromAPI = {
 export type MessageFromOrderbook = {
 
 }
+
+export type WsMessage = {
+
+}
