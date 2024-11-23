@@ -8,7 +8,7 @@ export class RedisManager {
 
     constructor(){
         this.client = createClient({
-            url: "redis://default:password@redis:6379" // Updated for authentication
+            url: "redis://redis:6379" // No password required, using service name 'redis'
         });
         this.client.connect();
     }
