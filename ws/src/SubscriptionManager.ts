@@ -11,7 +11,7 @@ export class SubscriptionManager {
 
     private constructor(){
         this.redisClient = createClient({
-            url: "redis://default:password@localhost:6379" // Updated for authentication
+            url: "redis://default:password@redis:6379" // Updated for authentication
         });
         this.redisClient.connect().catch(err => console.error("redis connection error: ", err));
     }
