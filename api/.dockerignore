@@ -1,0 +1,29 @@
+# Ignore node modules and dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Ignore transpiled files
+dist
+
+# Ignore development files
+*.log
+*.ts
+*.tsx
+coverage
+.DS_Store
+
+# Ignore environment and sensitive files
+.env
+.env.local
+.env.test
+.env.production
+
+# Ignore Docker files (if any extra)
+Dockerfile*
+docker-compose*
+
+# Miscellaneous
+.vscode
+.idea
+*.swp
