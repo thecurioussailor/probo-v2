@@ -10,7 +10,9 @@ export class SubscriptionManager {
     //redis://root@redis-probo:6379
 
     private constructor(){
-        this.redisClient = createClient();
+        this.redisClient = createClient({
+            url: "redis://default:password@localhost:6379" // Updated for authentication
+        });
         this.redisClient.connect().catch(err => console.error("redis connection error: ", err));
     }
 

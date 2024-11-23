@@ -8,10 +8,7 @@ export class RedisManager {
 
     constructor(){
         this.client = createClient({
-            socket: {
-                host: 'localhost',
-                port: 6379
-            }
+            url: "redis://default:password@localhost:6379" // Updated for authentication
         });
         this.client.connect();
     }

@@ -3,7 +3,7 @@ import { Engine } from "./trade/engine"
 async function main(){
     const engine = new Engine();
     const redisClient = createClient({
-        url: "redis://default:my_redis_password@localhost:6379", // Correct credentials
+        url: "redis://default:password@localhost:6379",
     });
 
     await redisClient.connect();

@@ -7,7 +7,9 @@ export class RedisManager{
     private static instance: RedisManager;
 
     private constructor() {
-        this.client = createClient();
+        this.client = createClient({
+            url: "redis://default:password@localhost:6379" // Updated for authentication
+        });
         this.client.connect();
 
         this.publisher = createClient();
