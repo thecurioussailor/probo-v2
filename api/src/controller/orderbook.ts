@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { RedisManager } from "../RedisManager";
-import { BUY_ORDER, GET_ORDERBOOK, SELL_ORDER } from "../types/types";
+import { BUY_ORDER, GET_ORDERBOOK, GET_ORDERBOOK_BY_SYMBOL, SELL_ORDER } from "../types/types";
 
 export const getOrderbook = async (req: Request, res: Response) => {
     const response = await RedisManager.getInstance().sendAndAwait({
@@ -10,8 +10,12 @@ export const getOrderbook = async (req: Request, res: Response) => {
 }
 
 export const getOrderbookBySymbol = async (req: Request, res: Response) => {
+    const { stockSymbol } = req.params;
     const response = await RedisManager.getInstance().sendAndAwait({
-        type: GET_ORDERBOOK,
+        type: GET_ORDERBOOK_BY_SYMBOL,
+        data: {
+            stockSymbol
+        }
     });
     res.json(response)
 }
@@ -46,4 +50,5 @@ export const sellOrder = async (req: Request, res: Response) => {
             stockType
         }
     })
+    res.json(response);
 }

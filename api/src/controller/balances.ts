@@ -28,7 +28,7 @@ export const resetAllBalances = async( req: Request, res: Response) => {
 
 export const getINRBalancesByUserId = async( req: Request, res: Response) => {
 
-    const { userId } = req.body;
+    const { userId } = req.params;
     const response = await RedisManager.getInstance().sendAndAwait({
         type: GET_INR_BALANCE_BY_USER_ID,
         data: {

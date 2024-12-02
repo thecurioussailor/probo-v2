@@ -11,7 +11,7 @@ export class SubscriptionManager {
 
     private constructor(){
         this.redisClient = createClient({
-            url: "redis://default:password@redis:6379" // Updated for authentication
+            url: "redis://default:@localhost:6379" // Updated for authentication
         });
         this.redisClient.connect().catch(err => console.error("redis connection error: ", err));
     }
@@ -64,5 +64,9 @@ export class SubscriptionManager {
     public userLeft(userId: string) {
         console.log("user left " + userId);
         this.subscriptions.get(userId)?.forEach(s => this.unsubscribe(userId, s));
+    }
+
+    getSubscriptions(userId: string){
+        return this.subscriptions.get(userId) || [];
     }
 }

@@ -23,7 +23,9 @@ export class UserManager {
         const user = new User(id, ws);
         this.users.set(id, user);
         this.registerOnClose(ws, id);
+        return user;
     }
+
     private registerOnClose(ws: WebSocket, id: string) {
         ws.on("close", () => {
             this.users.delete(id);

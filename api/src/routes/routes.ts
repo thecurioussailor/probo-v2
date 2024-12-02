@@ -13,7 +13,7 @@ router.get('/orderbook', getOrderbook);
 router.get('/balances/inr', getAllINRBalances);
 router.get('/balances/stock', getAllStockBalances);
 router.get('/reset', resetAllBalances);
-router.get('balance/inr/:userId', getINRBalancesByUserId);
+router.get('/balance/inr/:userId', getINRBalancesByUserId);
 router.post('/onramp/inr', onRampINRToUserId);
 router.get('/balance/stock/:userId', getStockBalanceByUserId);
 router.post('/order/buy', buyOrder);

@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import { IncomingMessage, SUBSCRIBE, UNSUBSCRIBE } from "./types/in";
 import { SubscriptionManager } from "./SubscriptionManager";
+import { OutMessage } from "./types/out";
 
 export class User {
 
@@ -23,7 +24,7 @@ export class User {
         this.subscriptions = this.subscriptions.filter(s => s !== subscription);
     }
 
-    emit(message: any){
+    emit(message: OutMessage){
         this.ws.send(JSON.stringify(message));
     }
 

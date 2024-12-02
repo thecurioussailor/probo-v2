@@ -12,10 +12,17 @@ export const USER_INR_BALANCE = "USER_INR_BALANCE";
 export const ONRAMP_INR_USER = "ONRAMP_INR_USER";
 export const USER_STOCK_BALANCE = "USER_STOCK_BALANCE";
 export const ORDERBOOK_SYMBOL = "ORDERBOOK_SYMBOL";
-export const MINTED = "MINTED"
-export const MINT_TRADE = "MINT_TRADE"
+export const BUY_ORDER = "BUY_ORDER";
+export const SELL_ORDER = "SELL_ORDER";
+export const MINTED = "MINTED";
+export const MINT_TRADE = "MINT_TRADE";
 
 export type MessageToAPI = {
+    type: "ERROR",
+    payload: {
+        message: string
+    }
+}| {
     type: typeof USER_CREATED | typeof USER_EXIST,
     payload: {
         userId: string
@@ -63,7 +70,7 @@ export type MessageToAPI = {
     }
 } | {
     type: typeof ORDERBOOK_SYMBOL,
-    payload: Order[]
+    payload: Order
 } | {
     type: typeof MINTED,
     payload: {
@@ -71,5 +78,19 @@ export type MessageToAPI = {
             quantity: number,
             locked: number
         }
+    }
+} | {
+    type: typeof BUY_ORDER,
+    payload: {
+        quantity: number,
+        remainingQuantity: number, // Corrected typo here
+        status: string
+    }
+} | {
+    type: typeof SELL_ORDER,
+    payload: {
+        quantity: number,
+        remainingQuantity: number, // Corrected typo here
+        status: string
     }
 }

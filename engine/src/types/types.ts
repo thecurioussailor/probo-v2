@@ -83,5 +83,12 @@ export type MessageFromOrderbook = {
 }
 
 export type WsMessage = {
-
+        yes: {
+            price: number;
+            totalQuantity: number;
+        }[];
+        no: {
+            price: number;
+            totalQuantity: number;
+        }[];
 }
